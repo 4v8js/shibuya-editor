@@ -21,6 +21,8 @@ import { EditorEvents } from './constants';
 import { Formats } from './types/format';
 import { Block } from './types/block';
 import { Settings, EditorController } from './types/editor';
+import { Link } from './components/styles/Link';
+import { LinkPopup } from './components/popups';
 
 interface Props {
   scrollContainer?: HTMLElement | string;
@@ -94,6 +96,8 @@ export const Editor = React.memo(
         'inline/style/strike': Strike,
         'inline/style/code': InlineCode,
         'inline/style/italic': Italic,
+        'inline/style/link': Link,
+        'popup/link': LinkPopup,
       });
       const [blocks, setBlocks] = React.useState<Block[]>([]);
       const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
@@ -309,6 +313,10 @@ export const Editor = React.memo(
         return blockFormats['toolbar/bubble'];
       }, [blockFormats]);
 
+      const MemoLinkPopup = React.useMemo(() => {
+        return blockFormats['popup/link'];
+      }, [blockFormats]);
+
       React.useImperativeHandle(forwardRef, () => editor, [editor]);
 
       return (
@@ -332,6 +340,7 @@ export const Editor = React.memo(
                   blockId={block.id}
                   readOnly={readOnly}
                   selected={block.selected}
+                  scrollContainer={scrollContainer}
                   onBeforeInput={handleInput}
                   onCompositionStart={handleCompositionStart}
                   onCompositionEnd={handleCompositionEnd}
@@ -342,6 +351,7 @@ export const Editor = React.memo(
           <MarginBottom onClick={handleContainerClick} />
           <MemoGlobalToolbar editor={memoEditor} />
           <MemoBubbleToolbar editor={memoEditor} scrollContainer={scrollContainer} />
+          <MemoLinkPopup editor={memoEditor} scrollContainer={scrollContainer} />
           <Selector
             contentEditable={true}
             className="clipboard"

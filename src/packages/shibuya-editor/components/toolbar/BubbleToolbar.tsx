@@ -7,6 +7,8 @@ import { EditorController } from '../../types/editor';
 import { InlineAttributes } from '../../types/inline';
 import { BlockType } from '../../types/block';
 import { getScrollContainer } from '../../utils/dom';
+import { LinkPopup } from '../popups';
+import { CaretPosition } from '../../types/caret';
 
 export interface BubbleToolbarProps {
   editor: EditorController;
@@ -58,6 +60,7 @@ export const BubbleToolbar = React.memo(
     const [position, setPosition] = React.useState<ToolbarPosition>();
     const [blockType, setBlockType] = React.useState<BlockType>();
     const [collapsed, setCollapsed] = React.useState<boolean>(true);
+    const [currentCaretPosition, setCurrentCaretPosition] = React.useState<CaretPosition | null>();
 
     const handleBold = React.useCallback(
       (event: React.MouseEvent) => {
@@ -86,9 +89,13 @@ export const BubbleToolbar = React.memo(
     const handleLink = React.useCallback(
       (event: React.MouseEvent) => {
         event.preventDefault();
-        editor.getModule('toolbar').formatInline({ link: 'https://google.com' });
+        const eventEmitter = editor.getEventEmitter();
+        eventEmitter.emit(EditorEvents.EVENT_LINK_CLICK, {
+          mode: 'openEnterLink',
+          caretPosition: currentCaretPosition,
+        });
       },
-      [formats],
+      [formats, currentCaretPosition],
     );
 
     const handleInlineCode = React.useCallback(

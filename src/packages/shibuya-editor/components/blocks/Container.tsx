@@ -12,6 +12,7 @@ interface BlockProps {
   selected: boolean;
   formats: Formats;
   editor: EditorController;
+  scrollContainer?: HTMLElement | string;
   onCompositionStart: (e: React.CompositionEvent) => void;
   onCompositionEnd: (e: React.CompositionEvent) => void;
   onBeforeInput: (e: React.FormEvent) => void;
@@ -40,13 +41,13 @@ const Overlay = styled.div`
 `;
 
 export const BlockContainer: React.VFC<BlockProps> = React.memo(
-  ({ blockId, editor, selected, readOnly = false, formats, ...props }) => {
+  ({ blockId, editor, selected, readOnly = false, scrollContainer, formats, ...props }) => {
     const [blockFormat, setBlockFormat] = React.useState<string>();
     const [Container, setContainer] = React.useState<React.FC<any>>(formats['block/paragraph']);
     const block = useBlockRenderer({ blockId, editor });
 
     const memoContents = React.useMemo(() => {
-      return InlineContainer({ contents: block?.contents ?? [], formats });
+      return InlineContainer({ contents: block?.contents ?? [], formats, editor, scrollContainer });
     }, [block?.contents, formats]);
 
     React.useEffect(() => {

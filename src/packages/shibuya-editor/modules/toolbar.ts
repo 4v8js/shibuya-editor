@@ -3,6 +3,7 @@ import { EventEmitter } from '../utils/event-emitter';
 import { EditorController } from '../types/editor';
 import { BlockType, BlockAttributes } from '../types/block';
 import { InlineAttributes } from '../types/inline';
+import { CaretPosition } from '../types/caret';
 
 interface Props {
   eventEmitter: EventEmitter;
@@ -25,19 +26,21 @@ export class ToolbarModule implements Module {
     this.eventEmitter.info('destroy toolbar module');
   }
 
-  formatInline(attributes: InlineAttributes = {}) {
-    const caretPosition = this.editor.getCaretPosition();
-
+  formatInline(attributes: InlineAttributes = {}, caretPosition: CaretPosition | null = null) {
+    if (!caretPosition) {
+      caretPosition = this.editor.getCaretPosition();
+    }
     if (!caretPosition) return;
     const block = this.editor.getBlock(caretPosition.blockId);
     if (!block) return;
     this.editor.formatText(block.id, caretPosition.index, caretPosition.length, attributes);
+
     setTimeout(
       () =>
         this.editor.setCaretPosition({
           blockId: block.id,
-          index: caretPosition.index,
-          length: caretPosition.length,
+          index: caretPosition?.index,
+          length: caretPosition?.length,
         }),
       10,
     );

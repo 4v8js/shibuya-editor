@@ -1,14 +1,22 @@
 import * as React from 'react';
 import styled from 'styled-components';
+import { EditorController } from '../../types/editor';
 import { Formats } from '../../types/format';
 import { Inline } from '../../types/inline';
 
 interface ContainerProps {
   contents: Inline[];
   formats: Formats;
+  editor: EditorController;
+  scrollContainer?: HTMLElement | string;
 }
 
-export const InlineContainer: React.VFC<ContainerProps> = ({ contents, formats, ...props }: ContainerProps) => {
+export const InlineContainer: React.VFC<ContainerProps> = ({
+  contents,
+  formats,
+  editor,
+  ...props
+}: ContainerProps) => {
   return (
     <>
       {contents.map((content) => {
@@ -24,6 +32,7 @@ export const InlineContainer: React.VFC<ContainerProps> = ({ contents, formats, 
           <Container
             key={content.id}
             formats={formats}
+            editor={editor}
             data-inline-id={content.id}
             data-format={inlineFormat}
             data-attributes={JSON.stringify(content.attributes)}

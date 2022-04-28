@@ -623,6 +623,7 @@ export function useEditor({
     const redo = json0diff(prevBlock, currentBlock, DiffMatchPatch);
     const undo = json0diff(currentBlock, prevBlock, DiffMatchPatch);
 
+    console.log(undo);
     if (redo && undo) {
       eventEmitter.emit(EditorEvents.EVENT_EDITOR_HISTORY_PUSH, {
         payload: {

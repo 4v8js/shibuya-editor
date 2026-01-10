@@ -45,14 +45,23 @@ export const BlockContainer: React.FC<BlockProps> = React.memo(
       }
       if (block?.type === 'CODE-BLOCK') {
         const text = block.contents.map((content) => content.text).join('');
-        return InlineContainer({
-          contents: textToPrismaToken(text, block.attributes?.language ?? 'typescript'),
-          formats,
-          editor,
-          scrollContainer,
-        });
+        return (
+          <InlineContainer
+            contents={textToPrismaToken(text, block.attributes?.language ?? 'typescript')}
+            formats={formats}
+            editor={editor}
+            scrollContainer={scrollContainer}
+          />
+        );
       }
-      return InlineContainer({ contents: block?.contents ?? [], formats, editor, scrollContainer });
+      return (
+        <InlineContainer
+          contents={block?.contents ?? []}
+          formats={formats}
+          editor={editor}
+          scrollContainer={scrollContainer}
+        />
+      );
     }, [block?.contents, block?.type, formats, editor]);
 
     const blockFormat = `block/${block?.type.toLocaleLowerCase()}`;

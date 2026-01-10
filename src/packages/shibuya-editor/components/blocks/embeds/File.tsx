@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import prettyBytes from 'pretty-bytes';
-import { RotatingLines } from 'react-loader-spinner';
+import { RotatingLines } from '../../icons/Spinner';
 import { EditorController } from '../../../types/editor';
 import { Formats } from '../../../types/format';
 import { Download } from '../../icons';
@@ -111,7 +111,6 @@ export const File = React.memo(
               <RotatingLines
                 strokeColor="grey"
                 strokeWidth="5"
-                animationDuration="0.75"
                 width="18"
                 visible={true}
               />

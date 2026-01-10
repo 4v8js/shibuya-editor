@@ -15,7 +15,7 @@ export interface CheckListProps {
   editor: EditorController;
 }
 
-const ListItem = styled.div<Pick<CheckListProps, 'placeholder'>>`
+const ListItem = styled.div<{ $placeholder?: string }>`
   font-size: 1rem;
   outline: 0;
   margin: 0.25rem 0;
@@ -23,13 +23,13 @@ const ListItem = styled.div<Pick<CheckListProps, 'placeholder'>>`
   line-height: 1.6;
   box-sizing: border-box;
   position: relative;
-  ${({ placeholder }) => {
+  ${({ $placeholder }) => {
     return (
-            placeholder &&
+            $placeholder &&
             css`
               ::after {
                 opacity: 0.3;
-                content: attr(placeholder);
+                content: '${$placeholder}';
               }
             `
     );
@@ -93,7 +93,7 @@ export const CheckList = React.memo(
       <ListItem
         ref={headerRef}
         spellCheck={false}
-        placeholder={showPlaceholder ? placeholder : ''}
+        $placeholder={showPlaceholder ? placeholder : ''}
         style={{
           textDecoration: checked ? 'line-through' : 'none',
         }}

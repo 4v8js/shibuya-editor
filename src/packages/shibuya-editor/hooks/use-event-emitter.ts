@@ -10,7 +10,7 @@ export function useEventEmitter(): [
   },
 ] {
   const [eventEmitter] = React.useState<EventEmitter>(new EventEmitter());
-  const subscriptionRef = React.useRef<Subscription>();
+  const subscriptionRef = React.useRef<Subscription | undefined>(undefined);
 
   const on = React.useCallback(
     <T>(key: string, callback: (res: T) => void): Subscription | undefined => {

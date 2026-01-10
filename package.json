@@ -9,58 +9,49 @@
     "url": "git+https://github.com/4v8js/shibuya-editor.git"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "24.1.0",
-    "@rollup/plugin-node-resolve": "15.0.2",
-    "@rollup/plugin-typescript": "11.1.0",
-    "@testing-library/jest-dom": "5.16.5",
-    "@testing-library/react": "14.0.0",
-    "@testing-library/user-event": "14.4.3",
+    "@rollup/plugin-commonjs": "28.0.2",
+    "@rollup/plugin-node-resolve": "16.0.0",
+    "@rollup/plugin-typescript": "12.1.2",
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/react": "16.1.0",
+    "@testing-library/user-event": "14.5.2",
     "@types/diff-match-patch": "1.0.32",
-    "@types/jest": "29.5.1",
     "@types/lodash.isequal": "4.5.6",
-    "@types/node": "18.16.7",
+    "@types/node": "22.10.5",
     "@types/prismjs": "^1.26.0",
-    "@types/react": "18.2.6",
-    "@types/react-dom": "18.2.4",
-    "@types/styled-components": "5.1.26",
+    "@types/react": "19.0.2",
+    "@types/react-dom": "19.0.2",
     "@types/throttle-debounce": "5.0.0",
     "@types/twemoji": "13.1.1",
     "@types/uuid": "^9.0.0",
-    "date-fns": "^2.29.3",
+    "@vitejs/plugin-react": "4.3.4",
+    "date-fns": "^3.6.0",
     "diff-match-patch": "1.0.5",
     "ot-json0": "1.1.0",
     "ot-json1": "1.0.2",
     "pretty-bytes": "6.1.0",
     "prismjs": "^1.29.0",
-    "react": "18.2.0",
-    "react-day-picker": "^8.6.0",
-    "react-dom": "18.2.0",
-    "react-loader-spinner": "5.3.4",
-    "react-scripts": "5.0.1",
-    "rollup": "3.21.6",
-    "rollup-plugin-dts": "5.3.0",
+    "react": "19.0.0",
+    "react-day-picker": "^9.4.4",
+    "react-dom": "19.0.0",
+    "rollup": "4.29.1",
+    "rollup-plugin-dts": "6.1.1",
     "rollup-plugin-postcss": "^4.0.2",
-    "rollup-plugin-typescript2": "0.34.1",
     "rxjs": "7.8.1",
     "string-length": "5.0.1",
     "throttle-debounce": "5.0.0",
     "twemoji": "14.0.2",
-    "typescript": "4.9.5",
+    "typescript": "5.7.2",
     "uuid": "9.0.0",
-    "web-vitals": "3.3.1"
+    "vite": "6.0.7",
+    "vitest": "2.1.8"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "build:lib": "rollup -c --bundleConfigAsCjs",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "dev": "vite",
+    "build": "vite build",
+    "build:lib": "rollup -c",
+    "preview": "vite preview",
+    "test": "vitest"
   },
   "browser": {
     "crypto": false
@@ -81,7 +72,7 @@
     "json0-ot-diff": "1.1.2",
     "lodash.isequal": "4.5.0",
     "ot-text-unicode": "4.0.0",
-    "styled-components": "5.3.10",
+    "styled-components": "6.1.13",
     "unicount": "^1.2.0"
   }
 }

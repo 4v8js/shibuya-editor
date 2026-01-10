@@ -84,7 +84,7 @@ export const LinkPopup = React.memo(({ editor, scrollContainer, ...props }: Prop
   const [popupPosition, setPopupPosition] = React.useState<PopupPosition>();
   const [currentCaretPosition, setCurrentCaretPosition] = React.useState<CaretPosition | null>();
   const modalRef = React.useRef<HTMLDivElement>(null);
-  const linkUrlRef = React.useRef<string>();
+  const linkUrlRef = React.useRef<string | undefined>(undefined);
 
   const getRange = React.useCallback(() => {
     const parent = inlineElement?.parentElement;

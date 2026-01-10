@@ -15,7 +15,7 @@ export interface DecisionProps {
   editor: EditorController;
 }
 
-const Container = styled.div`
+const Container = styled.div<{ $placeholder?: string }>`
   font-size: 1rem;
   outline: 0;
   margin: 0.25rem 0;
@@ -26,7 +26,7 @@ const Container = styled.div`
 
   ::after {
     opacity: 0.3;
-    content: attr(placeholder);
+    content: '${({ $placeholder }) => $placeholder ?? ''}';
   }
 `;
 
@@ -68,7 +68,7 @@ export const Decision = React.memo(
       <Container
         ref={headerRef}
         spellCheck={false}
-        placeholder={showPlaceholder ? placeholder : ''}
+        $placeholder={showPlaceholder ? placeholder : ''}
         {...props}
       >
         <IconOuter>

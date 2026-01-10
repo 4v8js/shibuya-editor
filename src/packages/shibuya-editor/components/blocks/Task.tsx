@@ -41,7 +41,7 @@ const IconButton = styled.div`
   flex-direction: row-reverse;
 `;
 
-const Container = styled.div<Pick<TaskProps, 'placeholder'>>`
+const Container = styled.div<{ $placeholder?: string }>`
   font-size: 1rem;
   outline: 0;
   margin: 0.25rem 0;
@@ -50,13 +50,13 @@ const Container = styled.div<Pick<TaskProps, 'placeholder'>>`
   box-sizing: border-box;
   position: relative;
   width: 100%;
-  ${({ placeholder }) => {
+  ${({ $placeholder }) => {
     return (
-            placeholder &&
+            $placeholder &&
             css`
               ::after {
                 opacity: 0.3;
-                content: attr(placeholder);
+                content: '${$placeholder}';
               }
             `
     );
@@ -273,7 +273,7 @@ export const Task = React.memo(
           <Container
             ref={headerRef}
             spellCheck={false}
-            placeholder={showPlaceholder ? placeholder : ''}
+            $placeholder={showPlaceholder ? placeholder : ''}
             style={{
               textDecoration: checked ? 'line-through' : 'none',
             }}

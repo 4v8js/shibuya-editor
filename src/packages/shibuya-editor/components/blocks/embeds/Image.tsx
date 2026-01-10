@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { MutatingDots } from 'react-loader-spinner';
+import { MutatingDots } from '../../icons/Spinner';
 import { EditorController } from '../../../types/editor';
 import { Formats } from '../../../types/format';
 

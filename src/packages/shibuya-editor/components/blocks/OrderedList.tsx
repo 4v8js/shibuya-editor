@@ -16,7 +16,7 @@ export interface OrderedListProps {
   meta: BlockAttributes;
   editor: EditorController;
 }
-const ListItem = styled.div<Pick<OrderedListProps, 'placeholder'>>`
+const ListItem = styled.div<{ $placeholder?: string }>`
   font-size: 1rem;
   outline: 0;
   margin: 0.25rem 0;
@@ -35,13 +35,13 @@ const ListItem = styled.div<Pick<OrderedListProps, 'placeholder'>>`
     content: var(--content);
   }
 
-  ${({ placeholder }) => {
+  ${({ $placeholder }) => {
     return (
-      placeholder &&
+      $placeholder &&
       css`
         ::after {
           opacity: 0.3;
-          content: attr(placeholder);
+          content: '${$placeholder}';
         }
       `
     );
@@ -98,7 +98,7 @@ export const OrderedList = React.memo(
         ref={headerRef}
         style={memoStyle}
         spellCheck={false}
-        placeholder={showPlaceholder ? placeholder : ''}
+        $placeholder={showPlaceholder ? placeholder : ''}
         {...props}
       >
         {contents}

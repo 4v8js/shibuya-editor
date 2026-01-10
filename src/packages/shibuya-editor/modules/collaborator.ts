@@ -37,20 +37,20 @@ export class CollaboratorModule implements Module {
   onInit() {
     this.eventEmitter.info('init collaborator module');
     // 共同編集のテスト用
-    // this.eventEmitter.select(EditorEvents.EVENT_SELECTION_CHANGE).subscribe((v) => {
-    //   const caret = this.editor.getCaretPosition();
-    //   this.editor.getModule('collaborator').updatePosition({
-    //     id: 'OodywE2HkiW1KeTBPCa96',
-    //     name: 'ktgr',
-    //     blockId: caret?.blockId ?? null,
-    //     imageUrl: 'https://pbs.twimg.com/profile_images/1287576269442318337/TAhRwDuP_normal.jpg',
-    //   });
-    //   this.editor.getModule('collaborator').updatePosition({
-    //     id: 'OodywE2HkiW1KeTBPCa95',
-    //     name: 'ktgr2',
-    //     blockId: caret?.blockId ?? null,
-    //   });
-    // });
+    this.eventEmitter.select(EditorEvents.EVENT_SELECTION_CHANGE).subscribe((v) => {
+      const caret = this.editor.getCaretPosition();
+      this.editor.getModule('collaborator').updatePosition({
+        id: 'OodywE2HkiW1KeTBPCa96',
+        name: 'ktgr',
+        blockId: caret?.blockId ?? null,
+        imageUrl: 'https://pbs.twimg.com/profile_images/1287576269442318337/TAhRwDuP_normal.jpg',
+      });
+      this.editor.getModule('collaborator').updatePosition({
+        id: 'OodywE2HkiW1KeTBPCa95',
+        name: 'ktgr2',
+        blockId: caret?.blockId ?? null,
+      });
+    });
   }
 
   onDestroy() {

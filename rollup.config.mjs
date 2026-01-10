@@ -1,9 +1,10 @@
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import typescript from 'rollup-plugin-typescript2';
+import typescript from '@rollup/plugin-typescript';
 import postcss from 'rollup-plugin-postcss';
+import { readFileSync } from 'fs';
 
-const packageJson = require('./package.json');
+const packageJson = JSON.parse(readFileSync('./package.json', 'utf-8'));
 
 export default [
   {
@@ -16,11 +17,15 @@ export default [
         sourcemap: true,
       },
     ],
-    external: ['react', 'react-dom'],
+    external: ['react', 'react-dom', 'styled-components'],
     plugins: [
-      resolve({ browser: true }),
+      resolve({ browser: true, extensions: ['.js', '.jsx', '.ts', '.tsx'] }),
       commonjs(),
-      typescript({ tsconfig: './tsconfig.json' }),
+      typescript({
+        tsconfig: './tsconfig.build.json',
+        include: ['src/packages/shibuya-editor/**/*'],
+        exclude: ['node_modules'],
+      }),
       postcss({
         inject: true,
         minimize: true,

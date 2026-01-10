@@ -14,7 +14,7 @@ export interface BulletListProps {
   editor: EditorController;
 }
 
-const ListItem = styled.div<Pick<BulletListProps, 'placeholder'>>`
+const ListItem = styled.div<{ $placeholder?: string }>`
   font-size: 1rem;
   outline: 0;
   margin: 0.25rem 0;
@@ -34,13 +34,13 @@ const ListItem = styled.div<Pick<BulletListProps, 'placeholder'>>`
     top: 0.7rem;
   }
 
-  ${({ placeholder }) => {
+  ${({ $placeholder }) => {
     return (
-      placeholder &&
+      $placeholder &&
       css`
         ::after {
           opacity: 0.3;
-          content: attr(placeholder);
+          content: '${$placeholder}';
         }
       `
     );
@@ -85,7 +85,7 @@ export const BulletList = React.memo(
         ref={headerRef}
         style={memoStyle}
         spellCheck={false}
-        placeholder={showPlaceholder ? placeholder : ''}
+        $placeholder={showPlaceholder ? placeholder : ''}
         {...props}
       >
         {contents}

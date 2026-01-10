@@ -7,6 +7,7 @@ export function caretRangeFromPoint(x: number, y: number): Range | null {
   if (document.caretPositionFromPoint) {
     // @ts-ignore
     const position = document.caretPositionFromPoint(x, y);
+    if (!position) return null;
     const range = document.createRange();
     range.setStart(position.offsetNode, position.offset);
     range.setEnd(position.offsetNode, position.offset);

@@ -14,7 +14,7 @@ export interface Header2Props {
   attributes: BlockAttributes;
   editor: EditorController;
 }
-const Header = styled.h2`
+const Header = styled.h2<{ $placeholder?: string }>`
   outline: 0;
   box-sizing: border-box;
   padding: 8px 12px;
@@ -23,7 +23,7 @@ const Header = styled.h2`
 
   ::after {
     opacity: 0.3;
-    content: attr(placeholder);
+    content: '${({ $placeholder }) => $placeholder ?? ''}';
   }
 `;
 
@@ -46,7 +46,7 @@ export const Header2 = React.memo(
       <Header
         ref={headerRef}
         spellCheck={false}
-        placeholder={showPlaceholder ? placeholder : ''}
+        $placeholder={showPlaceholder ? placeholder : ''}
         {...props}
       >
         {contents}

@@ -171,8 +171,8 @@ export const InlineTextLink = React.memo(
     const [popupPosition, setPopupPosition] = React.useState<PopupPosition | null>(null);
     const positionRef = React.useRef<PopupPosition | null>(null);
     positionRef.current = popupPosition;
-    const hoverTimeoutRef = React.useRef<ReturnType<typeof setTimeout>>();
-    const leaveTimeoutRef = React.useRef<ReturnType<typeof setTimeout>>();
+    const hoverTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+    const leaveTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
     const handleEdit = React.useCallback(() => {
       setPopupPosition(null);

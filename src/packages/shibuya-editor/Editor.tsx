@@ -51,6 +51,7 @@ interface Props {
   placeholder?: string;
   formats?: { [key: string]: any };
   settings?: Partial<Settings>;
+  ref?: React.Ref<EditorController>;
 }
 
 const Container = styled.div`
@@ -67,13 +68,13 @@ const Container = styled.div`
     display: none;
   }
 `;
-const Inner = styled.div<{ placeholder: string }>`
+const Inner = styled.div<{ $placeholder?: string }>`
   flex-shrink: 0;
   flex-grow: 0;
   position: relative;
-  ${({ placeholder }) => {
+  ${({ $placeholder }) => {
     return (
-      placeholder &&
+      $placeholder &&
       css`
         ::after {
           position: absolute;
@@ -81,7 +82,7 @@ const Inner = styled.div<{ placeholder: string }>`
           left: 12px;
           pointer-events: none;
           opacity: 0.3;
-          content: attr(placeholder);
+          content: '${$placeholder}';
         }
       `
     );
@@ -101,17 +102,14 @@ const Selector = styled.div`
 `;
 
 export const Editor = React.memo(
-  React.forwardRef<EditorController, Props>(
-    (
-      {
-        readOnly = false,
-        placeholder = 'ご自由にお書きください',
-        formats,
-        settings = {},
-        ...props
-      }: Props,
-      forwardRef,
-    ) => {
+  ({
+    readOnly = false,
+    placeholder = 'ご自由にお書きください',
+    formats,
+    settings = {},
+    ref: forwardRef,
+    ...props
+  }: Props) => {
       const [eventEmitter, eventTool] = useEventEmitter();
       const [editorRef, editor] = useEditor({
         settings: {
@@ -446,7 +444,7 @@ export const Editor = React.memo(
             onCompositionStart={handleCompositionStart}
             onCompositionEnd={handleCompositionEnd}
             onBeforeInput={handleInput}
-            placeholder={showPlaceholder ? placeholder : ''}
+            $placeholder={showPlaceholder ? placeholder : ''}
           >
             {memoBlocks.map((block, index) => {
               return (
@@ -478,6 +476,5 @@ export const Editor = React.memo(
           />
         </Container>
       );
-    },
-  ),
+  },
 );

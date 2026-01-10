@@ -620,12 +620,12 @@ export const TableCell = React.memo(
           contentEditable={true}
           data-child-block-id={block?.id}
         >
-          {InlineContainer({
-            contents: block?.contents ?? [],
-            formats,
-            editor,
-            scrollContainer,
-          })}
+          <InlineContainer
+            contents={block?.contents ?? []}
+            formats={formats}
+            editor={editor}
+            scrollContainer={scrollContainer}
+          />
         </TableContent>
       );
     }, [block?.id, block?.contents, editor, scrollContainer]);

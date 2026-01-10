@@ -21,8 +21,7 @@ import {
   HistoryModule,
 } from '../modules';
 import { copyObject } from '../utils/object';
-
-const json0diff = require('json0-ot-diff');
+import json0diff from 'json0-ot-diff';
 
 interface Props {
   settings: Settings;

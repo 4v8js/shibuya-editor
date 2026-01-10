@@ -14,7 +14,7 @@ export interface Header3Props {
   attributes: BlockAttributes;
   editor: EditorController;
 }
-const Header = styled.h3`
+const Header = styled.h3<{ $placeholder?: string }>`
   font-size: 1.2rem;
   outline: 0;
   margin: 0;
@@ -24,7 +24,7 @@ const Header = styled.h3`
 
   ::after {
     opacity: 0.3;
-    content: attr(placeholder);
+    content: '${({ $placeholder }) => $placeholder ?? ''}';
   }
 `;
 
@@ -47,7 +47,7 @@ export const Header3 = React.memo(
       <Header
         ref={headerRef}
         spellCheck={false}
-        placeholder={showPlaceholder ? placeholder : ''}
+        $placeholder={showPlaceholder ? placeholder : ''}
         {...props}
       >
         {contents}

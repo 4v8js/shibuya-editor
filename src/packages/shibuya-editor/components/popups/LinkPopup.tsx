@@ -14,7 +14,7 @@ import {
   getChildBlockRangeByElement,
   getRangeByElement,
 } from '../../utils/block';
-import { copyObject } from '../../utils/object';
+import { FormatLink } from '../icons';
 
 export interface LinkPopupProps {
   editor: EditorController;
@@ -26,52 +26,65 @@ interface PopupPosition {
   left: number;
 }
 
-interface LinkPopupType extends PopupPosition {
-  position: 'absolute' | 'relative';
-}
-
 interface Props {
   editor: EditorController;
   style?: React.ComponentProps<'div'>['style'];
   scrollContainer?: HTMLElement | string;
 }
 
-const LinkPopupContainer = styled.div<LinkPopupType>`
+const PopupContainer = styled.div`
+  position: absolute;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  position: ${(props) => props.position ?? 'absolute'};
-  top: ${(props) => props.top ?? 0}px;
-  left: ${(props) => props.left ?? 0}px;
-  padding: 8px;
+  padding: 12px;
   background-color: #fff;
-  border-radius: 4px;
-  border: 1px solid #ccc;
+  border-radius: 8px;
+  border: 1px solid #e4e4e7;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   font-size: 14px;
-  z-index: 1;
+  z-index: 10;
+  width: 320px;
+  box-sizing: border-box;
 `;
 
-const EnterLinkContainer = styled.input<{ position: 'absolute' | 'relative' }>`
-  position: ${(props) => props.position ?? 'absolute'};
-  background-color: #18181b;
-  border: 1px solid #ccc;
-  box-shadow: 0px 0px 5px #ddd;
-  color: #a1a1aa;
-  padding: 5px 12px;
-  white-space: nowrap;
+const InputWrapper = styled.div`
   display: flex;
-  width: 176px;
-  height: 24px;
-  font-size: 14px;
-`;
-
-const DeleteButton = styled.button`
-  font-size: 14px;
-  cursor: pointer;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #e4e4e7;
+  border-radius: 6px;
+  padding: 6px 10px;
+  background-color: #fafafa;
+  &:focus-within {
+    border-color: #a1a1aa;
+    background-color: #fff;
+  }
 `;
 
 const StyledInput = styled.input`
-  display: block;
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 14px;
+  color: #18181b;
+  background: transparent;
+  min-width: 0;
+  &::placeholder {
+    color: #a1a1aa;
+  }
+`;
+
+const RemoveButton = styled.button`
+  font-size: 13px;
+  color: #ef4444;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 export const LinkPopup = React.memo(({ editor, scrollContainer, ...props }: Props) => {
@@ -83,20 +96,9 @@ export const LinkPopup = React.memo(({ editor, scrollContainer, ...props }: Prop
   const [inlineElement, setInlineElement] = React.useState<Element | null>(null);
   const [popupPosition, setPopupPosition] = React.useState<PopupPosition>();
   const [currentCaretPosition, setCurrentCaretPosition] = React.useState<CaretPosition | null>();
+  const [hasExistingLink, setHasExistingLink] = React.useState(false);
   const modalRef = React.useRef<HTMLDivElement>(null);
-  const linkUrlRef = React.useRef<string | undefined>(undefined);
-
-  const getRange = React.useCallback(() => {
-    const parent = inlineElement?.parentElement;
-    if (!parent) return;
-    const [blockId] = getBlockId(parent);
-    if (!blockId) return;
-    const range = getRangeByElement(inlineElement as HTMLElement);
-    const block = editor.getBlock(blockId);
-    const blockRect = parent.getBoundingClientRect();
-    if (!range || !block) return;
-    return [range, block];
-  }, []);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
   const handleChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,17 +113,12 @@ export const LinkPopup = React.memo(({ editor, scrollContainer, ...props }: Prop
         handleSave();
         setPopupOpen(false);
       }
+      if (event.key === 'Escape') {
+        setPopupOpen(false);
+        setTimeout(() => editor.focus(), 10);
+      }
     },
     [linkUrl, currentCaretPosition],
-  );
-
-  const updateEditor = React.useCallback(
-    (callback: () => void) => {
-      editor.getModule('toolbar').setUpdating(true);
-      callback();
-      setTimeout(() => editor.getModule('toolbar').setUpdating(false), 100);
-    },
-    [editor],
   );
 
   const handleDelete = React.useCallback(() => {
@@ -174,10 +171,9 @@ export const LinkPopup = React.memo(({ editor, scrollContainer, ...props }: Prop
     setInline(undefined);
     setInlineElement(null);
     setTimeout(() => editor.focus(), 10);
-  }, [updateEditor, currentCaretPosition, editor, inlineElement]);
+  }, [currentCaretPosition, editor, inlineElement]);
 
   const handleSave = React.useCallback(() => {
-    // 最初にリンクにするときはキャレット情報があるので、インラインのレンジは使わない
     if (!currentCaretPosition) {
       const parent = inlineElement?.parentElement;
       if (!parent) return;
@@ -214,7 +210,7 @@ export const LinkPopup = React.memo(({ editor, scrollContainer, ...props }: Prop
     const eventEmitter = editor.getEventEmitter();
     subs.add(
       eventEmitter.select(EditorEvents.EVENT_LINK_CLICK).subscribe((v) => {
-        linkUrlRef.current = v.link;
+        setHasExistingLink(!!v.link);
         if (v.mode) {
           setPopupMode(v.mode);
         }
@@ -232,10 +228,7 @@ export const LinkPopup = React.memo(({ editor, scrollContainer, ...props }: Prop
           if (linkRect) {
             const top = linkRect.top + (container?.scrollTop ?? 0) + containerRect.top + 4;
             const left = linkRect.left - containerRect.left;
-            setPopupPosition({
-              top,
-              left,
-            });
+            setPopupPosition({ top, left });
           }
           setCurrentCaretPosition(null);
           return;
@@ -245,11 +238,8 @@ export const LinkPopup = React.memo(({ editor, scrollContainer, ...props }: Prop
           const containerRect = container.getBoundingClientRect();
           const top = (container?.scrollTop ?? 0) + caret?.rect.top - containerRect.top + 4;
           if (linkRect) {
-            const left = linkRect.left - containerRect.left - TOOLBAR_CHILD_WIDTH; // パレットに合わせるのでパレットの横幅分引く
-            setPopupPosition({
-              top,
-              left,
-            });
+            const left = linkRect.left - containerRect.left - TOOLBAR_CHILD_WIDTH;
+            setPopupPosition({ top, left });
           } else {
             setPopupPosition({
               top,
@@ -265,7 +255,6 @@ export const LinkPopup = React.memo(({ editor, scrollContainer, ...props }: Prop
         if (caret) {
           setFormats(editor.getFormats(caret?.blockId, caret?.index, caret?.length));
         }
-        // 選択範囲がある場合はキャレットがあるのでセットする
         setCurrentCaretPosition(v.caretPosition ? v.caretPosition : caret);
       }),
     );
@@ -273,6 +262,12 @@ export const LinkPopup = React.memo(({ editor, scrollContainer, ...props }: Prop
       subs.unsubscribe();
     };
   }, []);
+
+  React.useEffect(() => {
+    if (popupOpen) {
+      setTimeout(() => inputRef.current?.focus(), 50);
+    }
+  }, [popupOpen]);
 
   React.useEffect(() => {
     if (!popupOpen) return;
@@ -288,44 +283,32 @@ export const LinkPopup = React.memo(({ editor, scrollContainer, ...props }: Prop
   }, [popupOpen]);
 
   return ReactDOM.createPortal(
-    popupOpen && (
-      <div ref={modalRef}>
-        {popupMode === 'openEnterLink' && (
-          <>
-            {!linkUrlRef.current ? (
-              <EnterLinkContainer
-                position="absolute"
-                style={{ top: popupPosition?.top ?? 0, left: popupPosition?.left ?? 0 }}
-                {...props}
+    popupOpen &&
+      popupMode === 'openEnterLink' && (
+        <div ref={modalRef}>
+          <PopupContainer
+            style={{
+              top: popupPosition?.top ?? 0,
+              left: popupPosition?.left ?? 0,
+            }}
+          >
+            <InputWrapper>
+              <FormatLink size="16" fill="#a1a1aa" />
+              <StyledInput
+                ref={inputRef}
                 value={linkUrl}
-                placeholder="リンク先を入力してください"
+                placeholder="URLを入力"
                 onChange={handleChange}
                 onBlur={handleSave}
                 onKeyDown={handleKeyDown}
               />
-            ) : (
-              <LinkPopupContainer
-                position="absolute"
-                top={popupPosition?.top ?? 0}
-                left={popupPosition?.left ?? 0}
-              >
-                <div>
-                  URL
-                  <StyledInput
-                    value={linkUrl}
-                    placeholder="リンク先を入力してください"
-                    onChange={handleChange}
-                    onBlur={handleSave}
-                    onKeyDown={handleKeyDown}
-                  />
-                </div>
-                <DeleteButton onClick={handleDelete}>リンクを解除する</DeleteButton>
-              </LinkPopupContainer>
+            </InputWrapper>
+            {hasExistingLink && (
+              <RemoveButton onClick={handleDelete}>リンクを解除</RemoveButton>
             )}
-          </>
-        )}
-      </div>
-    ),
+          </PopupContainer>
+        </div>
+      ),
     getHtmlElement(scrollContainer) ?? document.body,
   );
 });

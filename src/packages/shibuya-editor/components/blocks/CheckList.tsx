@@ -19,7 +19,7 @@ const ListItem = styled.div<{ $placeholder?: string }>`
   font-size: 1rem;
   outline: 0;
   margin: 0.25rem 0;
-  padding: 0 0 0 calc(1.5em * var(--indent));
+  padding: 0 0 0 calc(1.5rem + 1.5em * var(--indent));
   line-height: 1.6;
   box-sizing: border-box;
   position: relative;

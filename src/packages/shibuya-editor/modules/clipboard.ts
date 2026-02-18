@@ -17,6 +17,7 @@ import { Inline } from '../types/inline';
 import { uniCount } from 'unicount';
 import { createInline } from '../utils/inline';
 import { copyObject } from '../utils/object';
+import { parseMarkdownInlines } from '../utils/parse-markdown-inlines';
 
 interface Props {
   eventEmitter: EventEmitter;
@@ -196,6 +197,14 @@ export class ClipboardModule implements Module {
         .map((inlineText, i) => {
           let blockType = 'PARAGRAPH';
           let attributes = {};
+          // 行全体が**で囲まれている場合、先にboldを剥がしてブロック検出を行う
+          let isWrappedBold = false;
+          const patternWrappedBold = /^\*\*(.+)\*\*$/;
+          const matchWrappedBold = inlineText.match(patternWrappedBold);
+          if (matchWrappedBold) {
+            inlineText = matchWrappedBold[1];
+            isWrappedBold = true;
+          }
           const patternHeader = /^#{1,6}\s/;
           const matchHeader = inlineText.match(patternHeader);
           if (matchHeader) {
@@ -235,7 +244,14 @@ export class ClipboardModule implements Module {
             inlineText = inlineText.replace(patternBlockQuote, '');
             blockType = `BLOCKQUOTE`;
           }
-          const inlines = [createInline('TEXT', inlineText)];
+          inlineText = inlineText.trim();
+          let inlines = parseMarkdownInlines(inlineText);
+          if (isWrappedBold) {
+            inlines = inlines.map((inline) => ({
+              ...inline,
+              attributes: { ...inline.attributes, bold: true },
+            }));
+          }
           const appendBlock = createBlock(blockType, inlines, attributes);
           this.editor.createBlock(appendBlock, prevBlockId);
           prevBlockId = appendBlock.id;
@@ -313,11 +329,11 @@ export class ClipboardModule implements Module {
         contents = deleteInlineContents(contents, caretPosition.index, caretPosition.length);
       }
       const [first, last] = splitInlineContents(contents, caretPosition.index);
-      const appendContent = createInline('TEXT', clipboardText.replaceAll('\r\n', '\n'));
+      const appendContents = parseMarkdownInlines(clipboardText.replace(/\r\n/g, '\n'));
 
       this.editor.updateBlock({
         ...prevBlock,
-        contents: [...first, appendContent, ...last],
+        contents: [...first, ...appendContents, ...last],
       });
       this.editor.render([prevBlock.id]);
       setTimeout(() => {

@@ -21,3 +21,6 @@ export * from './Assignment';
 export * from './Close';
 export * from './Download';
 export * from './Copy';
+export * from './ExternalLink';
+export * from './Unlink';
+export * from './Pencil';
